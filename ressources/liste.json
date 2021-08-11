@@ -1,0 +1,83 @@
+[
+  {
+    "id": 1,
+
+    "restaurantName": "La Taverne des Gueux",
+
+    "address": "41 Cité Tournois, 59790 Ronchin",
+
+    "lat": 50.6046946,
+
+    "long": 3.0758326,
+
+    "ratings": [
+      {
+        "stars": 1,
+
+        "comment": "Un excellent restaurant, j'y reviendrai ! Par contre il vaut mieux aimer la viande."
+      },
+
+      {
+        "stars": 0,
+
+        "comment": "Tout simplement mon restaurant préféré !"
+      }
+    ]
+  },
+
+  {
+    "id": 2,
+    
+    "restaurantName": "Babalou",
+
+    "address": "98 Rue du Sec Arembault",
+
+    "lat": 50.6352388,
+
+    "long": 3.0635538,
+
+    "ratings": [
+      {
+        "stars": 5,
+
+        "comment": "Une minuscule pizzeria délicieuse cachée juste à côté du Sacré choeur !"
+      },
+
+      {
+        "stars": 3,
+
+        "comment": "J'ai trouvé ça correct, sans plus"
+      }
+    ]
+  },
+  {
+    "id": 3,
+
+    "restaurantName": "La Tablée des Rois",
+
+    "address": "131 Chemin Challet, 59000 Lille",
+
+    "lat": 50.7803585,
+
+    "long": 3.1247278,
+
+    "ratings": [
+      {
+        "stars": 5,
+
+        "comment": "Un excellent restaurant, j'y reviendrai ! Par contre il vaut mieux aimer la viande."
+      },
+
+      {
+        "stars": 5,
+
+        "comment": "Tout simplement mon restaurant préféré !"
+      },
+      {
+        "stars": 5,
+
+        "comment": "Tout simplement mon restaurant préféré !"
+      }
+    ]
+  }
+]
