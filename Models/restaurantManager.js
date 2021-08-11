@@ -1,26 +1,32 @@
 import { Ajax } from "./ajax";
 import { Restaurant } from "./restaurant";
 
-
-
-
 export class RestaurantManager {
   constructor() {
-    this.listeRestaurant = [];
+    this.listRestaurant = [];
   }
 
   async fillInFromJson() {
-    let ajax = new Ajax;
+    let ajax = new Ajax();
     let data = await ajax.getListRestaurant();
     for (let currentRestaurant of data) {
       let newRestaurant = new Restaurant(
         currentRestaurant,
-        this.listeRestaurant.length + 1
+        this.listRestaurant.length + 1
       );
-      this.listeRestaurant.push(newRestaurant);
+      this.listRestaurant.push(newRestaurant);
     }
   }
   getMyRestaurants() {
-    return this.listeRestaurant;
+    return this.listRestaurant;
+  }
+
+  getRestaurantById(idRestaurant) {
+    for (let selectRestaurant of this.listRestaurant) {
+      if (selectRestaurant.id == idRestaurant) {
+        return selectRestaurant;
+      }
+    }
+    return null;
   }
 }
