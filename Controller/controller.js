@@ -16,29 +16,19 @@ export class Controller {
 
   async showMain() {
     await this.initData();
+    this.view.map = this.googleMap;
     let myList = this.restaurantManager.getMyRestaurants();
-
-    this.createMarker(myList, "ressources/img/sand.png");
+    const restaurants = myList.map(restaurant => {
+      restaurant.average = restaurant.calculateAverage();
+      return restaurant;
+    })
+    sessionStorage.setItem('restaurants', JSON.stringify(restaurants));
     this.view.showListRestaurant(myList);
+    console.log(this.view.filterRestaurant);
+    this.view.createMarker(myList, "ressources/img/sand.png");
     this.getGeolocation();
-  }
-
-  createMarker(listRestaurant, image) {
-    for(let currentRestaurant of listRestaurant){
-      let marker = new google.maps.Marker({
-        position: {
-          lat: parseFloat(currentRestaurant.lat),
-          lng: parseFloat(currentRestaurant.long),
-        },
-        map: this.googleMap,
-        title: currentRestaurant.restaurantName,
-        icon: new google.maps.MarkerImage(image),
-        idRestaurant: currentRestaurant.id,
-      });
-      marker.addListener("click", () => {
-        this.showDetails(marker.idRestaurant);
-      });
-    }
+    this.view.showSelector();
+    
   }
  
   showDetails(idRestaurant) {
