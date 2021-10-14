@@ -1,14 +1,18 @@
 export class View {
-  constructor() {
+  constructor(googleMap, image) {
     this.selector = document.getElementById("selector");
     this.liste = document.getElementById("listeRestaurant");
     this.details = document.getElementById("details");
     this.restaurants = "";
     this.initialListe = JSON.parse(sessionStorage.getItem("restaurants"));
+    this.googleMap = googleMap;
+    this.image = image;
+    this.allMarkers = [];
   }
 
-  createMarker(listRestaurant, image) {
-    for(let currentRestaurant of listRestaurant){
+  createMarker(listRestaurant) {
+    this.removeAllMarkers();
+    for (let currentRestaurant of listRestaurant) {
       let marker = new google.maps.Marker({
         position: {
           lat: parseFloat(currentRestaurant.lat),
@@ -16,13 +20,25 @@ export class View {
         },
         map: this.googleMap,
         title: currentRestaurant.restaurantName,
-        icon: new google.maps.MarkerImage(image),
+        icon: new google.maps.MarkerImage(this.image),
         idRestaurant: currentRestaurant.id,
       });
+      this.allMarkers.push(marker);
       marker.addListener("click", () => {
-        this.showDetails(marker.idRestaurant);
+        this.showDetailsRestaurant(currentRestaurant);
       });
     }
+  }
+
+  setMapOnAll(map, markers) {
+    for (let i = 0; i < markers.length; i++) {
+      markers[i].setMap(map);
+    }
+  }
+  
+  removeAllMarkers() {
+    this.setMapOnAll(null, this.allMarkers);
+    this.allMarkers = [];
   }
 
   showListRestaurant(listeRestaurant) {
@@ -73,28 +89,27 @@ export class View {
     this.addEventOnStarSelector();
   }
 
-  filterRestaurant(event) {
+  filterRestaurant(nbStars) {
     let liste = this.initialListe;
     let listeDisplay = [];
-    const nbStar = event.target.value;
     liste.filter((restaurant) => {
-      if (restaurant.average >= nbStar) {
+      if (restaurant.average >= nbStars) {
         listeDisplay.push(restaurant);
       }
     });
     this.showListRestaurant(listeDisplay);
     return listeDisplay;
-    
+
     // const restaurantFiltered = this.restaurants.filter(restaurant => restaurant.average >= nbStar );
     //this.showListRestaurant(restaurantFiltered);
   }
 
-  
-
   addEventOnStarSelector() {
     const starButtons = document.getElementsByClassName("i-button");
     [...starButtons].forEach((button) => {
-      button.addEventListener("click", () => this.filterRestaurant(event));
+      button.addEventListener("click", (event) =>
+        this.createMarker(this.filterRestaurant(event.target.value))
+      );
     });
     // Array.from(starButtons).map(button => {
     //   button.addEventListener('click', () => this.filterRestaurant(event));

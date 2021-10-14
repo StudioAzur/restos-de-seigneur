@@ -5,9 +5,10 @@ export class Controller {
   constructor(googleMap) {
     this.googleMap = googleMap;
     this.infoWindow = null;
+    this.image =  "ressources/img/sand.png";
 
     this.restaurantManager = new RestaurantManager();
-    this.view = new View();
+    this.view = new View(googleMap, this.image);
   }
 
   async initData() {
@@ -24,8 +25,7 @@ export class Controller {
     })
     sessionStorage.setItem('restaurants', JSON.stringify(restaurants));
     this.view.showListRestaurant(myList);
-    console.log(this.view.filterRestaurant);
-    this.view.createMarker(myList, "ressources/img/sand.png");
+    this.view.createMarker(myList); 
     this.getGeolocation();
     this.view.showSelector();
     
