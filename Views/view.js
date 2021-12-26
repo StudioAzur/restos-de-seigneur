@@ -1,13 +1,20 @@
+import { Modal } from "./modal";
+import { GOOGLE_API_KEY } from "../config";
+import { Restaurant } from "../Models/restaurant";
+import { RestaurantManager } from "../Models/restaurantManager";
 export class View {
   constructor(googleMap, image) {
     this.selector = document.getElementById("selector");
     this.liste = document.getElementById("listeRestaurant");
     this.details = document.getElementById("details");
     this.restaurants = "";
-    this.initialListe = JSON.parse(sessionStorage.getItem("restaurants"));
     this.googleMap = googleMap;
     this.image = image;
     this.allMarkers = [];
+    let restaurantManager = new RestaurantManager();
+    this.initialList = restaurantManager.getMyRestaurantsFromSessionStorage();
+    this.restaurant = new Restaurant();
+    this.modal = new Modal(this);
   }
 
   createMarker(listRestaurant) {
@@ -25,17 +32,50 @@ export class View {
       });
       this.allMarkers.push(marker);
       marker.addListener("click", () => {
-        this.showDetailsRestaurant(currentRestaurant);
+        window.controller.showDetails(currentRestaurant.id);
+        /* this.showComment(currentRestaurant); */
       });
     }
   }
 
+  addEventOnMap() {
+    const map = this.googleMap;
+    map.addListener("click", (e) => {
+      // Lancer la modal
+      let lng = e.latLng.lng();
+      let lat = e.latLng.lat();
+      const geocoder = new google.maps.Geocoder();
+      geocoder
+        .geocode({ location: e.latLng })
+        .then((response) => {
+          if (response.results[0]) {
+            this.modal.initModal();
+            let idRestaurant = this.initialList.length + 1;
+            this.modal.showModal();
+            this.modal.setTitle("Ajouter votre restaurant");
+            this.modal.setDescription("Ajoutez votre restaurant");
+            let address = response.results[0].formatted_address;
+            this.modal.setContentForAddRestaurant(
+              idRestaurant,
+              address,
+              lat,
+              lng
+            );
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    });
+  }
+
+  // Refaire une fonction qui efface les markers
   setMapOnAll(map, markers) {
     for (let i = 0; i < markers.length; i++) {
       markers[i].setMap(map);
     }
   }
-  
+
   removeAllMarkers() {
     this.setMapOnAll(null, this.allMarkers);
     this.allMarkers = [];
@@ -43,36 +83,69 @@ export class View {
 
   showListRestaurant(listeRestaurant) {
     if (listeRestaurant == null) {
-      listeRestaurant = JSON.parse(sessionStorage.getItem("restaurants"));
+      listeRestaurant = this.initialList;
     }
     let thisHtml = "";
     for (let currentRestaurant of listeRestaurant) {
-      thisHtml += `<div id = restaurant${currentRestaurant.idRestaurant} class="vassaux">
-       <h4>${currentRestaurant.restaurantName}</h4>
-       <p class = "paragraph">${currentRestaurant.address}</p>
-       <div>${currentRestaurant.average}</div>
+      const imgSrc = `https://maps.googleapis.com/maps/api/streetview?size=500x200&location=${currentRestaurant.lat},${currentRestaurant.long}&fov=80&heading=70&pitch=0&key=${GOOGLE_API_KEY}`;
+      thisHtml += `
+      <div class="row">
+        <div class="col s12 m6">
+          <div class="card id = restaurant${
+            currentRestaurant.idRestaurant
+          } class="vassaux"">
+            <div class="card-image">
+              <img src="${imgSrc}">
+              <span class="card-title">${
+                currentRestaurant.restaurantName
+              }</span>
+              <a class="btn-floating halfway-fab waves-effect waves-light red"><i class="material-icons">add</i></a>
+            </div>
+            <div class="card-content">
+            <p class = "paragraph">${currentRestaurant.address}</p>
+            <div>${this.restaurant.calculateAverage(
+              currentRestaurant.ratings
+            )}</div>
+            </div>
+          </div>
+        </div>
       </div>`;
-      this.liste.innerHTML = thisHtml;
     }
+    this.liste.innerHTML = thisHtml;
     this.restaurants = listeRestaurant;
   }
+
   showComment(restaurant) {
     let content = "";
-    restaurant.ratings.forEach((rating) => {
-      content += `<span>${rating.stars}<span>
-      <p>Commentaire :</p>
-      <p class=comment>${rating.comment}</p>
-      </div>`;
-    });
-    this.details.innerHTML += content;
+    const title = document.getElementById("title");
+    title.innerHTML = `${restaurant.restaurantName}`;
+    const imgSrc = `https://maps.googleapis.com/maps/api/streetview?size=500x200&location=${restaurant.lat},${restaurant.long}&fov=80&heading=70&pitch=0&key=${GOOGLE_API_KEY}`;
+    let imgView = document.createElement("img");
+    imgView.src = imgSrc;
+    if (restaurant.ratings.length > 0) {
+      restaurant.ratings.forEach((rating) => {
+        content += `<div id = "commentContainer">
+        <span>${rating.stars}<span>
+        <p>Commentaire :</p>
+        <p class=comment>${rating.comment}</p>
+        </div>`;
+      });
+    } else {
+      content += `<div id="commentContainer"></div>`;
+    }
+    this.details.innerHTML = content;
+    let commentContainer = document.getElementById("commentContainer");
+    commentContainer.insertAdjacentElement("beforebegin", title);
+    commentContainer.insertAdjacentElement("afterbegin", imgView);
+    this.addButton(restaurant.id, "addComment");
   }
 
-  showDetailsRestaurant(restaurant) {
-    const imgSrc = `https://maps.googleapis.com/maps/api/streetview?size=500x200&location=${restaurant.lat},${restaurant.long}&fov=80&heading=70&pitch=0&key=${GOOGLE_API_KEY}`;
-    this.details.innerHTML = `<div id = "commentContainer">
-    <img src=${imgSrc} alt="StreetView of restaurant">
-    </div>`;
-    this.showComment(restaurant);
+  addButton(idRestaurant, action) {
+    let content = "";
+    content += `</hr><button data-target="modal" class="modal-trigger waves-effect waves-light btn-large teal button" id="${action}" 
+    >Ajouter un commentaire</button>`;
+    this.details.innerHTML += content;
+    this.addEventOnButtonsComment(idRestaurant);
   }
 
   showSelector() {
@@ -90,18 +163,15 @@ export class View {
   }
 
   filterRestaurant(nbStars) {
-    let liste = this.initialListe;
+    let liste = this.initialList;
     let listeDisplay = [];
     liste.filter((restaurant) => {
-      if (restaurant.average >= nbStars) {
+      if (restaurant.calculateAverage(restaurant.ratings) >= nbStars) {
         listeDisplay.push(restaurant);
       }
     });
     this.showListRestaurant(listeDisplay);
     return listeDisplay;
-
-    // const restaurantFiltered = this.restaurants.filter(restaurant => restaurant.average >= nbStar );
-    //this.showListRestaurant(restaurantFiltered);
   }
 
   addEventOnStarSelector() {
@@ -114,5 +184,31 @@ export class View {
     // Array.from(starButtons).map(button => {
     //   button.addEventListener('click', () => this.filterRestaurant(event));
     // });
+  }
+
+  addEventOnButtonsComment(idRestaurant) {
+    const commentButtons = document.getElementsByClassName("button");
+    //console.log(commentButtons);
+    [...commentButtons].forEach((button) => {
+      button.addEventListener("click", (event) => {
+        this.modal.initModal();
+        this.modal.showModal();
+        this.modal.setTitle("Ajouter votre commentaire");
+        this.modal.setDescription(
+          "Laissez votre avis sur les meilleures tavernes du coin"
+        );
+        this.modal.setContentForAddComment(idRestaurant);
+      });
+    });
+  }
+  setContentModal() {
+    this.modal.setContentForAddComment();
+  }
+  addEventCloseModal() {
+    const cross = document.getElementById("close");
+    cross.addEventListener("click", () => {
+      let modal = document.getElementById("modal");
+      modal.setAttribute("aria-hidden", "true");
+    });
   }
 }

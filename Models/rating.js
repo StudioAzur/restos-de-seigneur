@@ -9,5 +9,9 @@ export class Rating {
         this.stars = stars;
         this.comment = comment;
     }
+
+    setRating(value){
+        this.comment = value;
+    }
     
 }
