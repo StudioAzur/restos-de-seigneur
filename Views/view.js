@@ -124,11 +124,15 @@ export class View {
     imgView.src = imgSrc;
     if (restaurant.ratings.length > 0) {
       restaurant.ratings.forEach((rating) => {
+        if(rating.stars){
         content += `<div id = "commentContainer">
         <span>${rating.stars}<span>
         <p>Commentaire :</p>
         <p class=comment>${rating.comment}</p>
         </div>`;
+        }else{
+          content = ``;
+        }
       });
     } else {
       content += `<div id="commentContainer"></div>`;
