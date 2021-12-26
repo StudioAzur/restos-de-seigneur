@@ -76,6 +76,9 @@ export class Modal {
     const inputValue = this.getInputValue();
     const inputStarValue = this.getRateValue();
     const idRestaurant = this.getIdModal();
+
+    console.log('before save comment', idRestaurant)
+
     let restaurant = window.controller.saveNewComment(
       idRestaurant,
       inputValue,
@@ -86,7 +89,7 @@ export class Modal {
   }
 
   saveRestaurant(latitude, longitude) {
-    const inputId = this.getIdValue();
+    const inputId = parseInt(this.getIdValue());
     const inputAdress = this.getAdressValue();
     const inputName = this.getNameValue();
     window.controller.saveNewRestaurant(
@@ -114,9 +117,10 @@ export class Modal {
 
   setContentForAddRestaurant(idNewRestaurant, address, latitude, longitude) {
     const divContent = document.getElementById("content-modal-inset");
+    console.log(JSON.parse(sessionStorage.getItem('mesRestaurants').length))
     divContent.innerHTML = `
       <label for="idRestaurant">Votre Id :</label>
-      <input type="text" value="${idNewRestaurant}" id="idRestaurant">
+      <input type="text" value="${JSON.parse(sessionStorage.getItem('mesRestaurants')).length + 1}" id="idRestaurant">
       <label for="address">Adresse du restaurant</label>
       <input type="text" value="${address}" id="address">
       <label for="name">Nom du restaurant</label>

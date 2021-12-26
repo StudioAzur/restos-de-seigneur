@@ -20,7 +20,7 @@ export class Restaurant {
   }
 
   withJson(json, id) {
-    this.id = id;
+    this.id = parseInt(id);
     this.restaurantName = json.restaurantName;
     this.address = json.address;
     this.lat = json.lat;

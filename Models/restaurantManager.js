@@ -44,8 +44,11 @@ export class RestaurantManager {
   }
 
   getRestaurantById(idRestaurant) {
+    console.log('input',idRestaurant)
     for (let selectRestaurant of this.listRestaurant) {
       if (selectRestaurant.id == idRestaurant) {
+
+        console.log('result get by id', selectRestaurant)
         return selectRestaurant;
       }
     }
