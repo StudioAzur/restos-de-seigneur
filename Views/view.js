@@ -170,8 +170,6 @@ export class View {
     let liste = this.initialList;
     let listeDisplay = [];
     liste.filter((restaurant) => {
-      console.log('average calcul', restaurant.calculateAverage(restaurant.ratings))
-      console.log(nbStars)
       if (restaurant.calculateAverage(restaurant.ratings) >= nbStars) {
         listeDisplay.push(restaurant);
       }
@@ -186,8 +184,6 @@ export class View {
       button.addEventListener("click", (event) =>
       
       {
-        console.log('pure event', event)
-        console.log('before call',event.target.value);
         this.createMarker(this.filterRestaurant(event.target.value))}
       );
     });
@@ -198,7 +194,6 @@ export class View {
 
   addEventOnButtonsComment(idRestaurant) {
     const commentButtons = document.getElementsByClassName("button");
-    //console.log(commentButtons);
     [...commentButtons].forEach((button) => {
       button.addEventListener("click", (event) => {
         this.modal.initModal();
