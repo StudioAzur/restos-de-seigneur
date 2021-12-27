@@ -1,6 +1,5 @@
 import { Controller } from "./Controller/controller";
 import { GOOGLE_API_KEY } from "./config.js";
-import { Restaurant } from "./Models/restaurant";
 
 let script = document.createElement("script");
 script.src =

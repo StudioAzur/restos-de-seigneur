@@ -77,8 +77,6 @@ export class Modal {
     const inputStarValue = this.getRateValue();
     const idRestaurant = this.getIdModal();
 
-    console.log('before save comment', idRestaurant)
-
     let restaurant = window.controller.saveNewComment(
       idRestaurant,
       inputValue,
@@ -104,28 +102,31 @@ export class Modal {
 
   setContentForAddComment(idRestaurant) {
     const divComment = document.getElementById("content-modal-inset");
-    const modal = this.elems;
-    divComment.innerHTML = `<label for="stars">Entrez votre note : </label>
-    <input type="number" id="stars" min="0" max="5"/>
-    <label for="comment">Entrez votre commentaire : </label>
-    <input type="text" id ="comment"/>
-    <input type = "hidden" id="idRestaurantComment" value="${idRestaurant}">
-    <button type="button" id="sendComment">Commenter</button>`;
-    modal.appendChild(divComment);
+    divComment.innerHTML = `
+    <div>
+      <label for="stars">Entrez votre note : </label>
+      <input type="number" id="stars" min="0" max="5">
+      <label for="comment">Entrez votre commentaire : </label>
+      <input type="text" id ="comment">
+      <input type = "hidden" id="idRestaurantComment" value="${idRestaurant}">
+      <button type="button" class="waves-effect waves-light amber accent-4" id="sendComment">Commenter</button>
+    </div>`;
     this.addEventSendCommentButton();
   }
 
-  setContentForAddRestaurant(idNewRestaurant, address, latitude, longitude) {
+  setContentForAddRestaurant(address, latitude, longitude) {
     const divContent = document.getElementById("content-modal-inset");
     console.log(JSON.parse(sessionStorage.getItem('mesRestaurants').length))
     divContent.innerHTML = `
+    <div>
       <label for="idRestaurant">Votre Id :</label>
       <input type="text" value="${JSON.parse(sessionStorage.getItem('mesRestaurants')).length + 1}" id="idRestaurant">
       <label for="address">Adresse du restaurant</label>
       <input type="text" value="${address}" id="address">
       <label for="name">Nom du restaurant</label>
       <input type="text" value="" id="name">
-      <button id="buttonAddRestaurant">Ajouter votre restaurant</button>
+      <button id="buttonAddRestaurant" class="waves-effect waves-light amber accent-4">Ajouter votre restaurant</button>
+    </div>
     `;
     const button = document.getElementById("buttonAddRestaurant");
     button.addEventListener("click", () => {

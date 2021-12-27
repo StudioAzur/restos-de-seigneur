@@ -124,8 +124,6 @@ export class Controller {
         if(!restaurant.ratings){
           restaurant.ratings = []
           restaurant.ratings.push({stars : "", comment : ""})
-          
-          console.log(restaurant)
         }
         restaurant.ratings.push(new Rating(star, comment));
        let newList = [...listRestaurants,restaurant]

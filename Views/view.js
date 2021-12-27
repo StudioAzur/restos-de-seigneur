@@ -56,7 +56,6 @@ export class View {
             this.modal.setDescription("Ajoutez votre restaurant");
             let address = response.results[0].formatted_address;
             this.modal.setContentForAddRestaurant(
-              idRestaurant,
               address,
               lat,
               lng
@@ -99,7 +98,7 @@ export class View {
               <span class="card-title">${
                 currentRestaurant.restaurantName
               }</span>
-              <a class="btn-floating halfway-fab waves-effect waves-light red"><i class="material-icons">add</i></a>
+              <a class="btn-floating halfway-fab waves-effect waves-light amber accent-4"><i class="material-icons">add</i></a>
             </div>
             <div class="card-content">
             <p class = "paragraph">${currentRestaurant.address}</p>
@@ -119,7 +118,7 @@ export class View {
     let content = "";
     const title = document.getElementById("title");
     title.innerHTML = `${restaurant.restaurantName}`;
-    const imgSrc = `https://maps.googleapis.com/maps/api/streetview?size=500x200&location=${restaurant.lat},${restaurant.long}&fov=80&heading=70&pitch=0&key=${GOOGLE_API_KEY}`;
+    const imgSrc = `https://maps.googleapis.com/maps/api/streetview?size=800x200&location=${restaurant.lat},${restaurant.long}&fov=80&heading=70&pitch=0&key=${GOOGLE_API_KEY}`;
     let imgView = document.createElement("img");
     imgView.src = imgSrc;
     if (restaurant.ratings.length > 0) {
@@ -155,11 +154,12 @@ export class View {
   showSelector() {
     let content = "";
     const nbStarsTotal = 5;
-    let stars = "*";
+    let stars = `<i class="material-icons">star</i>`;
+    
     for (let nbStars = 1; nbStars <= nbStarsTotal; nbStars++) {
       let pyramid = stars.repeat(nbStars);
       content += `<div class="selector">
-        <button id="btn${nbStars}" value="${nbStars}" class="i-button">${pyramid}</button>
+        <button class="waves-effect waves-light btn-large teal" id="btn${nbStars}" value="${nbStars}" class="i-button">${pyramid}</button>
       </div>`;
     }
     this.selector.innerHTML = content;
