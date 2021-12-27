@@ -159,7 +159,7 @@ export class View {
     for (let nbStars = 1; nbStars <= nbStarsTotal; nbStars++) {
       let pyramid = stars.repeat(nbStars);
       content += `<div class="selector">
-        <button class="waves-effect waves-light btn-large teal" id="btn${nbStars}" value="${nbStars}" class="i-button">${pyramid}</button>
+        <button data-filter="${nbStars}" class=" i-button waves-effect waves-light btn-large teal" id="btn${nbStars}" value="${nbStars}">${pyramid}</button>
       </div>`;
     }
     this.selector.innerHTML = content;
@@ -170,6 +170,8 @@ export class View {
     let liste = this.initialList;
     let listeDisplay = [];
     liste.filter((restaurant) => {
+      console.log('average calcul', restaurant.calculateAverage(restaurant.ratings))
+      console.log(nbStars)
       if (restaurant.calculateAverage(restaurant.ratings) >= nbStars) {
         listeDisplay.push(restaurant);
       }
@@ -179,10 +181,14 @@ export class View {
   }
 
   addEventOnStarSelector() {
-    const starButtons = document.getElementsByClassName("i-button");
+    const starButtons = document.querySelectorAll('[data-filter]');
     [...starButtons].forEach((button) => {
       button.addEventListener("click", (event) =>
-        this.createMarker(this.filterRestaurant(event.target.value))
+      
+      {
+        console.log('pure event', event)
+        console.log('before call',event.target.value);
+        this.createMarker(this.filterRestaurant(event.target.value))}
       );
     });
     // Array.from(starButtons).map(button => {

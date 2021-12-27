@@ -36,21 +36,16 @@ export class Controller {
       let newPlace = [];
       let place = {};
       for (let i = 0; i < 10; i++) {
-        let newIndex = i + 1
+        let newIndex = i + 1;
         place = new Restaurant();
-        console.log(results[i]);
         place.withGoogle(results[i]);
         newPlace.push(place);
-        place.id = newIndex
+        place.id = newIndex;
       }
       //}
-      if(sessionStorage.getItem('mesRestaurants')){
-        console.log('clear 1')
-        console.log(newPlace.length)
-        Storage.removeItem('mesRestaurants')
-        this.reset()
+      if (sessionStorage.getItem("mesRestaurants")) {
+        this.reset();
       }
-      console.log('add ID', newPlace)
       sessionStorage.setItem("mesRestaurants", JSON.stringify(newPlace));
     }
     return resultJson;
@@ -61,7 +56,7 @@ export class Controller {
     this.view.map = this.googleMap;
     let myInitialList =
       this.restaurantManager.getMyRestaurantsFromSessionStorage();
-      myInitialList.slice(0, 10).map((restaurant) => {
+    myInitialList.slice(0, 10).map((restaurant) => {
       restaurant.average = restaurant.calculateAverage(restaurant.ratings);
       return restaurant;
     });
@@ -75,8 +70,7 @@ export class Controller {
   showDetails(idRestaurant) {
     let currentRestaurant =
       this.restaurantManager.getRestaurantById(idRestaurant);
-      console.log("before show comment", currentRestaurant)
-    this.view.showComment(currentRestaurant);
+      this.view.showComment(currentRestaurant);
   }
 
   getGeolocation() {
@@ -111,37 +105,29 @@ export class Controller {
   }
 
   saveNewComment(idRestaurant, comment, star) {
-    console.log('init save new comment input :', idRestaurant)
     const listRestaurants = JSON.parse(
       sessionStorage.getItem("mesRestaurants")
     );
-    let toto
-    console.log('inside loop all resto',listRestaurants)
+    let myRestaurants;
     for (let restaurant of listRestaurants) {
-      console.log('inside loop show ID',restaurant.id)
-
       if (restaurant.id == idRestaurant) {
-        if(!restaurant.ratings){
-          restaurant.ratings = []
-          restaurant.ratings.push({stars : "", comment : ""})
+        if (!restaurant.ratings) {
+          restaurant.ratings = [];
+          restaurant.ratings.push({ stars: "", comment: "" });
         }
         restaurant.ratings.push(new Rating(star, comment));
-       let newList = [...listRestaurants,restaurant]
-       console.log('new list concat', newList)
-        
-          if(sessionStorage.getItem('mesRestaurants')){
-            //Storage.removeItem('mesRestaurants')
-            console.log('clear 2')
-         //   this.reset()
+        let newList = [...listRestaurants, restaurant];
+
+        if (sessionStorage.getItem("mesRestaurants")) {
+          //Storage.removeItem('mesRestaurants')
+          //   this.reset()
           sessionStorage.setItem("mesRestaurants", JSON.stringify(newList));
         }
         this.restaurantManager.listRestaurant = listRestaurants;
-        console.log('réassign restaurant toto', restaurant)
-        toto = restaurant
-      
+        myRestaurants = restaurant;
       }
     }
-    return toto
+    return myRestaurants;
   }
   saveNewRestaurant(idRestaurant, address, name, latitude, longitude) {
     const listRestaurants = JSON.parse(
@@ -155,10 +141,9 @@ export class Controller {
     restaurant.long = longitude;
     listRestaurants.push(restaurant);
     let newList = JSON.stringify(listRestaurants);
-    if(sessionStorage.getItem('mesRestaurants')){
+    if (sessionStorage.getItem("mesRestaurants")) {
       //Storage.removeItem('mesRestaurants')
-      console.log('clear 3')
-      this.reset()
+      this.reset();
     }
     sessionStorage.setItem("mesRestaurants", newList);
     this.showMain();
@@ -171,7 +156,7 @@ export class Controller {
   addListenerOnMap() {
     this.reset();
     this.googleMap.addListener("dragend", (e) => {
-    this.showMain();
+      this.showMain();
     });
   }
 }

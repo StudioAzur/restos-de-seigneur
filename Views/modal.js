@@ -116,7 +116,6 @@ export class Modal {
 
   setContentForAddRestaurant(address, latitude, longitude) {
     const divContent = document.getElementById("content-modal-inset");
-    console.log(JSON.parse(sessionStorage.getItem('mesRestaurants').length))
     divContent.innerHTML = `
     <div>
       <label for="idRestaurant">Votre Id :</label>

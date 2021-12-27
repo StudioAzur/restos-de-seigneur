@@ -31,3 +31,7 @@ body {
 #commentContainer img {
   width: 100%;
 }
+
+.material-icons{
+  pointer-events: none;
+}
